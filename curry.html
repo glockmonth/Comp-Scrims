@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMP SCRIMS NA</title>
+  <style>
+    /* Modern styling with dark theme */
+    :root {
+      --primary-color: #00ccff;
+      --secondary-color: #ff0066;
+      --dark-bg: #0f0f1a;
+      --darker-bg: #08080f;
+      --light-text: #ffffff;
+      --card-bg: rgba(255, 255, 255, 0.05);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', 'Roboto', sans-serif;
+    }
+
+    body {
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+      overflow-x: hidden;
+    }
+
+    /* Splash screen */
+    #splash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-color: var(--darker-bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+    }
+
+    #splash h1 {
+      font-size: 5rem;
+      font-weight: 900;
+      text-align: center;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 20px rgba(0, 204, 255, 0.3);
+      letter-spacing: -2px;
+    }
+
+    /* Main Content */
+    .content {
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--darker-bg);
+      padding: 1.5rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: var(--light-text);
+      text-decoration: none;
+      font-weight: 600;
+      position: relative;
+      padding-bottom: 4px;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .active-tab::after {
+      width: 100% !important;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 6rem 0 4rem;
+      text-align: center;
+      background: radial-gradient(circle at center, rgba(0, 204, 255, 0.1), transparent);
+    }
+
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      opacity: 0.8;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .tab-button {
+      background: var(--card-bg);
+      border: none;
+      padding: 0.8rem 2rem;
+      color: var(--light-text);
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+
+    .tab-button:hover {
+      border-color: var(--primary-color);
+    }
+
+    .tab-button.active {
+      background: linear-gradient(45deg, rgba(0, 204, 255, 0.2), rgba(255, 0, 102, 0.2));
+      border-color: var(--primary-color);
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Scrim Schedule */
+    .scrim-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .scrim-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scrim-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .scrim-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .scrim-date {
+      font-size: 0.9rem;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .scrim-title {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+
+    .scrim-details {
+      font-size: 0.95rem;
+      opacity: 0.8;
+      margin-bottom: 1rem;
+    }
+
+    .scrim-status {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: rgba(0, 204, 255, 0.1);
+      color: var(--primary-color);
+    }
+
+    .status-upcoming {
+      background: rgba(0, 204, 255, 0.1);
+      color: var(--primary-color);
+    }
+
+    .status-live {
+      background: rgba(255, 0, 102, 0.1);
+      color: var(--secondary-color);
+    }
+
+    /* Leaderboard styling */
+    .leaderboard-tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .leaderboard-tab {
+      background: var(--card-bg);
+      border: none;
+      padding: 0.5rem 1.2rem;
+      color: var(--light-text);
+      font-size: 0.9rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .leaderboard-tab.active {
+      background: rgba(0, 204, 255, 0.2);
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 3rem;
+    }
+
+    .leaderboard-table th,
+    .leaderboard-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .leaderboard-table th {
+      font-weight: 600;
+      color: var(--primary-color);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .leaderboard-table tr:hover {
+      background: var(--card-bg);
+    }
+
+    .player-rank {
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .top-rank {
+      color: gold;
+    }
+
+    .player-name {
+      font-weight: 600;
+    }
+
+    /* About page */
+    .about-section {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .about-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .about-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .about-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .about-text {
+      line-height: 1.8;
+    }
+
+    .owner-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .owner-card {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 1.5rem;
+      flex: 1;
+      min-width: 200px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .owner-name {
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .owner-title {
+      font-size: 0.9rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .owner-bio {
+      font-size: 0.95rem;
+      opacity: 0.8;
+    }
+
+    .discord-cta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 3rem 0;
+      padding: 2rem;
+      background: linear-gradient(45deg, rgba(0, 204, 255, 0.05), rgba(255, 0, 102, 0.05));
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .discord-cta h3 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .discord-cta p {
+      max-width: 600px;
+      margin-bottom: 2rem;
+      opacity: 0.8;
+    }
+
+    .discord-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      background: linear-gradient(45deg, #5865F2, #7289DA);
+      color: white;
+      padding: 0.8rem 2rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .discord-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(88, 101, 242, 0.3);
+    }
+
+    .discord-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--darker-bg);
+      padding: 2rem 0;
+      text-align: center;
+      margin-top: 3rem;
+    }
+
+    footer p {
+      opacity: 0.6;
+      font-size: 0.9rem;
+    }
+
+    /* Support Page */
+    .support-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: var(--card-bg);
+      border-radius: 12px;
+    }
+
+    .support-title {
+      margin-bottom: 1.5rem;
+    }
+
+    .support-text {
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        gap: 1rem;
+      }
+      
+      .hero h2 {
+        font-size: 2rem;
+      }
+      
+      .hero p {
+        font-size: 1rem;
+      }
+      
+      .leaderboard-table th,
+      .leaderboard-table td {
+        padding: 0.8rem 0.5rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      #splash h1 {
+        font-size: 3rem;
+      }
+      
+      .nav-links {
+        display: none;
+      }
+      
+      .scrim-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<script>
+    // Splash logic
+    window.addEventListener("load", () => {
+      const splash = document.getElementById("splash");
+      const content = document.querySelector(".content");
+  
+      setTimeout(() => {
+        splash.style.opacity = "0";
+        splash.style.visibility = "hidden";
+        content.style.opacity = "1";
+      }, 2000);
+    });
+  
+    // Tab switching (Scrims / Leaderboard)
+    document.addEventListener("DOMContentLoaded", () => {
+      const tabButtons = document.querySelectorAll(".tab-button");
+      const tabContents = document.querySelectorAll(".tab-content");
+  
+      tabButtons.forEach(button => {
+        button.addEventListener("click", () => {
+          tabButtons.forEach(btn => btn.classList.remove("active"));
+          tabContents.forEach(tab => tab.classList.remove("active"));
+  
+          button.classList.add("active");
+          const target = button.dataset.tab;
+          document.getElementById(target).classList.add("active");
+        });
+      });
+  
+      // Navigation links
+      const homeLink = document.querySelector(".home-link");
+      const aboutLink = document.querySelector(".about-link");
+      const supportLink = document.querySelector(".support-link");
+  
+      const homeContent = document.getElementById("home-content");
+      const aboutContent = document.getElementById("about-content");
+      const supportContent = document.getElementById("support-content");
+  
+      function hideAll() {
+        homeContent.style.display = "none";
+        aboutContent.style.display = "none";
+        supportContent.style.display = "none";
+      }
+  
+      homeLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        hideAll();
+        homeContent.style.display = "block";
+        setActiveTab(homeLink);
+      });
+  
+      aboutLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        hideAll();
+        aboutContent.style.display = "block";
+        setActiveTab(aboutLink);
+      });
+  
+      supportLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        hideAll();
+        supportContent.style.display = "block";
+        setActiveTab(supportLink);
+      });
+  
+      function setActiveTab(link) {
+        document.querySelectorAll(".nav-links a").forEach(a => a.classList.remove("active-tab"));
+        link.classList.add("active-tab");
+      }
+    });
+  </script>
+  
+<body>
+  <!-- Splash Screen -->
+  <div id="splash">
+    <h1>COMP SCRIMS NA</h1>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <header>
+      <div class="container">
+        <nav>
+          <div class="logo">COMP SCRIMS NA</div>
+          <div class="nav-links">
+            <a href="#" class="home-link active-tab">Home</a>
+            <a href="#" class="about-link">About</a>
+            <a href="https://discord.gg/TZVQCy9Ccc" target="_blank">Discord</a>
+            <a href="#" class="support-link">Support</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="container">
+        <h2>Competitive Fortnite Scrims</h2>
+        <p>Join the most competitive Fortnite scrims in North America. Regular tournaments, professional hosting, and amazing competition.</p>
+      </div>
+    </section>
+
+    <section class="container" id="main-content">
+      <!-- Home Page Content -->
+      <div id="home-content">
+        <div class="tabs">
+          <button class="tab-button active" data-tab="scrims">Upcoming Scrims</button>
+          <button class="tab-button" data-tab="leaderboard">Leaderboard</button>
+        </div>
+
+        <!-- Scrims Tab Content -->
+        <div id="scrims" class="tab-content active">
+          <div class="scrim-list">
+            <div class="scrim-card">
+              <div class="scrim-date">APR 23, 2025 • 7:00 PM EST</div>
+              <h3 class="scrim-title">Solo Cash Cup Practice</h3>
+              <p class="scrim-details">Custom lobbies with realistic endgames. Perfect practice for the upcoming FNCS qualifiers.</p>
+              <span class="scrim-status status-upcoming">Upcoming</span>
+            </div>
+
+            <div class="scrim-card">
+              <div class="scrim-date">APR 24, 2025 • 6:00 PM EST</div>
+              <h3 class="scrim-title">Trio Arena Scrims</h3>
+              <p class="scrim-details">Trio format with stacked lobbies. Focus on mid-game rotations and surge control.</p>
+              <span class="scrim-status status-upcoming">Upcoming</span>
+            </div>
+
+            <div class="scrim-card">
+              <div class="scrim-date">APR 25, 2025 • 8:00 PM EST</div>
+              <h3 class="scrim-title">Boxfight Tournament</h3>
+              <p class="scrim-details">2v2 Boxfight tournament with cash prizes. Double elimination bracket.</p>
+              <span class="scrim-status status-upcoming">Upcoming</span>
+            </div>
+
+            <div class="scrim-card">
+              <div class="scrim-date">LIVE NOW</div>
+              <h3 class="scrim-title">Pro Duo Scrims</h3>
+              <p class="scrim-details">Join now through Discord. Currently in Game 3 of 5.</p>
+              <span class="scrim-status status-live">LIVE</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leaderboard Tab Content -->
+        <div id="leaderboard" class="tab-content">
+          <div class="leaderboard-tabs">
+            <button class="leaderboard-tab active">Current</button>
+            <button class="leaderboard-tab">Weekly</button>
+            <button class="leaderboard-tab">Monthly</button>
+          </div>
+
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Points</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="player-rank top-rank">1</td>
+                <td class="player-name">@Tiktok SyroFv</td>
+                <td>12 pts</td>
+              </tr>
+              <tr>
+                <td class="player-rank top-rank">2</td>
+                <td class="player-name">@rrrrrrrrvFyl</td>
+                <td>10 pts</td>
+              </tr>
+              <tr>
+                <td class="player-rank top-rank">3</td>
+                <td class="player-name">@elmofan24</td>
+                <td>8 pts</td>
+              </tr>
+              <tr>
+                <td class="player-rank">4</td>
+                <td class="player-name">@ytki</td>
+                <td>8 pts</td>
+              </tr>
+              <tr>
+                <td class="player-rank">5</td>
+                <td class="player-name">@JAsssassin</td>
+                <td>6 pts</td>
+              </tr>
+              <tr>
+                <td class="player-rank">6</td>
+                <td class="player-name">@Twitch_tensrvng</td>
+                <td>6 pts</td>
+              </tr>
+              <tr>
+                <td class="player-rank">7</td>
+                <td class="player-name">@CLIPP3D_by_S1LAS</td>
+                <td>6 pts</td>
+              </tr>
+              <tr>
+                <td class="player-rank">8</td>
+                <td class="player-name">@ManOnThizzotx</td>
+                <td>4 pts</td>
+              </tr>
+              <tr>
+                <td class="player-rank">9</td>
+                <td class="player-name">@Agent jayfv</td>
+                <td>4 pts</td>
+              </tr>
+              <tr>
+                <td class="player-rank">10</td>
+                <td class="player-name">@Fqncy Inn</td>
+                <td>2 pts</td>
+              </tr>
+              <tr>
+                <td class="player-rank">11</td>
+                <td class="player-name">@philliieellishi</td>
+                <td>2 pts</td>
+              </tr>
+              <tr>
+                <td class="player-rank">12</td>
+                <td class="player-name">@20earned2 dxrk</td>
+                <td>2 pts</td>
+              </tr>
+              <tr>
+                <td class="player-rank">13</td>
+                <td class="player-name">@Maqnetiizzotx 4rey</td>
+                <td>2 pts</td>
+              </tr>
+              <tr>
+                <td class="player-rank">14</td>
+                <td class="player-name">N/A</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td class="player-rank">15</td>
+                <td class="player-name">N/A</td>
+                <td>-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- About Page Content (Hidden by default) -->
+      <div id="about-content" style="display: none;">
+        <div class="about-section">
+          <div class="about-header">
+            <h2>About COMP SCRIMS NA</h2>
+          </div>
+          <div class="about-content">
+            <div class="about-text">
+              <p>COMP SCRIMS NA was founded in 2023 with one mission: to create the most competitive and professional scrimmage environment for North American Fortnite players.</p>
+              <p>Our community brings together players of all skill levels, from aspiring competitors to established pros, providing structured practice in a tournament-like atmosphere.</p>
+              <p>What sets COMP SCRIMS NA apart is our dedication to high-quality matches, professional organization, and a supportive community that helps everyone improve their gameplay.</p>
+              <p>We run daily scrims with various formats (solos, duos, trios) and host special events and tournaments with prize pools on a regular basis.</p>
+            </div>
+            <div>
+              <h3>Server Features</h3>
+              <ul style="list-style: none; padding-left: 0; margin-top: 1rem; line-height: 1.8;">
+                <li>✓ Daily organized scrims</li>
+                <li>✓ Multiple game formats</li>
+                <li>✓ Custom matchmaking</li>
+                <li>✓ Competitive leaderboards</li>
+                <li>✓ Prize pool tournaments</li>
+                <li>✓ VOD reviews</li>
+                <li>✓ Strategy discussions</li>
+                <li>✓ Professional moderation</li>
+                <li>✓ Active community</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Our Team</h3>
+            <div class="owner-cards">
+              <div class="owner-card">
+                <h3 class="owner-name">Raid</h3>
+                <div class="owner-title">Founder & Lead Administrator</div>
+                <p class="owner-bio">Competitive Fortnite player since Chapter 1. Raid established COMP SCRIMS NA to create the premier scrim community in North America, emphasizing competitive integrity and player development.</p>
+              </div>
+              <div class="owner-card">
+                <h3 class="owner-name">Ace</h3>
+                <div class="owner-title">Founder & Tournament Director</div>
+                <p class="owner-bio">Former semi-pro player with experience in esports event management. Ace also established COMP SCRIMS NA. Ace oversees the tournament operations and has been instrumental in growing the community from the beginning.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="discord-cta">
+          <h3>Join Our Community</h3>
+          <p>Ready to take your Fortnite gameplay to the next level? Join thousands of competitive players in our Discord server for daily scrims, tournaments, and more!</p>
+          <a href="https://discord.gg/TZVQCy9Ccc" class="discord-button" target="_blank">
+            <svg class="discord-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor">
+              <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+            </svg>
+            Join Discord
+          </a>
+        </div>
+      </div>
+
+      <!-- Support Page Content (Hidden by default) -->
+      <div id="support-content" style="display: none;">
+        <div class="support-section">
+          <h2 class="support-title">Support & Contact</h2>
+          <div class="support-text">
+            <p>Need help with something? Have questions about our scrims or tournaments? The fastest way to get support is through our Discord server.</p>
+            <p>Our moderation team is active daily and ready to assist with any issues you might encounter.</p>
+            <p>For support, please:</p>
+            <ol style="padding-left: 1.5rem; margin: 1rem 0; line-height: 1.6;">
+              <li>Join our Discord server</li>
+              <li>Go to the #support channel</li>
+              <li>Create a ticket describing your issue</li>
+            </ol>
+            <p>We typically respond to all support requests within 24 hours.</p>
+          </div>
+          <div style="text-align: center; margin-top: 2rem;">
+            <a href="https://discord.gg/TZVQCy9Ccc" class="discord-button" target="_blank">
+              <svg class="discord-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor">
+                <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853
